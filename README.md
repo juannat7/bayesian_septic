@@ -3,6 +3,8 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Precipitation annual maxima
 - [x] Distance to water bodies
 - [x] Soil hydraulic conductivity
+- [x] Median housing value
+- [ ] Train-test split
 - [ ] Topography
 
 The directory of this repository is divided as follows:

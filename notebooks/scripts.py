@@ -92,3 +92,26 @@ def read_data(file_dir, cols, is_balanced=True):
     coords = {'basin': basins, 'septic': np.arange(len(df))}
 
     return df, basin_idx, basins, coords
+
+def normalize(df, var, var_norm):
+    """
+    Normalize variables
+    
+    parameters:
+    -----------
+    df: DataFrame
+        DataFrame where the variables are found
+    var: str
+        the name of the variable where normalization is performed
+    var_norm: str
+        the new normalized variable name
+    
+    returns:
+    --------
+    df: DataFrame
+        the updated DataFrame with the normalized variable
+    """
+    
+    df[var_norm] = (df[var] - df[var].min()) / (df[var].max() - df[var].min())
+    
+    return df
