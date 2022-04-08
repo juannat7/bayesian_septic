@@ -34,7 +34,7 @@ def evaluate_bayes(trace, model, y_actual, samples=500):
     corr = np.sum(np.array(y_actual) == np.array(y_pred))
     
     acc = (corr / len(y_pred)) * 100
-    return acc
+    return acc, y_pred
 
 def read_data(file_dir, cols, is_balanced=True):
     """

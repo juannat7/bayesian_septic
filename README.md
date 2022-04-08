@@ -4,7 +4,7 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Distance to water bodies
 - [x] Soil hydraulic conductivity
 - [x] Median housing value
-- [ ] Train-test split
+- [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
 - [ ] Topography
 
 The directory of this repository is divided as follows:
