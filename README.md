@@ -5,7 +5,9 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Soil hydraulic conductivity
 - [x] Median housing value
 - [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
-- [ ] Topography
+- [x] Topography
+- [x] Comparison with baseline model
+- [ ] Basin-level generalization
 
 The directory of this repository is divided as follows:
 ```
