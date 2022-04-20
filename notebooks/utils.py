@@ -8,6 +8,7 @@ import theano.tensor as tt
 import scipy.stats as stats 
 import geopandas as gpd
 import seaborn as sns
+import scipy
 import censusdata
 from sklearn.metrics import confusion_matrix
 from params import *
@@ -188,3 +189,26 @@ def plot_confusion(y, y_pred):
     ax.set_ylabel('Actual Values ')
     ax.xaxis.set_ticklabels(['Repair','No-Repair'])
     ax.yaxis.set_ticklabels(['Repair','No-Repair'])
+
+def build_kdtree(xa):
+    """
+    Build fast spatial lookup tree
+    
+    parameters:
+    -----------
+    xa: xarray
+        xarray data for the variable of interest containing spatial information (ie. x,y coordinates)
+    
+    returns:
+    --------
+    KDTree: object
+        spatial lookup object
+    coords: 2D array
+        corresponding x,y coordinates for each of the data point
+    """
+    coords = []
+    for x in xa.x.values:
+        for y in xa.y.values:
+            coords.append([x,y])
+            
+    return scipy.spatial.KDTree(coords), coords
