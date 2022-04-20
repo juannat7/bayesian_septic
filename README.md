@@ -6,7 +6,7 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Median housing value
 - [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
 - [x] Topography (flow acc, elevation)
-- [x] Comparison with baseline model (with hyperparameter optimization)
+- [x] Comparison with optimized baseline models (pooled bayesian, RF, SVC)
 - [ ] Basin-level generalization
 
 The directory of this repository is divided as follows:
@@ -15,8 +15,8 @@ bayesian_septic
 │   README.md    
 └───data
 └───notebooks
-│   │   utils.py (utility functions)
-    |   params.py (constants)
+│   │   utils.py (a collection of utility functions)
+    |   params.py (a set of constants)
 ```
 - `data` folder contains all processed data necessary to run the notebooks
 - `notebooks` folder contains processes and analyses relevant to the project
