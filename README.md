@@ -6,7 +6,7 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Median housing value
 - [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
 - [x] Topography (flow acc, elevation)
-- [x] Comparison with optimized baseline models (pooled bayesian, RF, SVC)
+- [x] Comparison with optimized baseline models (pooled bayesian, SVC, RF, XGB, GBDT)
 - [ ] Basin-level generalization
 
 The directory of this repository is divided as follows:
