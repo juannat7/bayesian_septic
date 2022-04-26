@@ -7,7 +7,7 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
 - [x] Topography (flow acc, elevation)
 - [x] Comparison with optimized baseline models (pooled bayesian, SVC, RF, XGB, GBDT)
-- [ ] Basin-level generalization
+- [ ] Goodness-of-fit tests (WAIC, LOO, variance (TBD))
 
 The directory of this repository is divided as follows:
 ```
