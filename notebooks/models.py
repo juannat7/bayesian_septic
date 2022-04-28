@@ -43,6 +43,7 @@ with pm.Model(coords=coords) as water_model:
                                    )
 
     # likelihood of observed data
+    water_priors = pm.sample_prior_predictive(samples=500)
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
@@ -80,6 +81,7 @@ with pm.Model(coords=coords) as soil_model:
                                    )
 
     # likelihood of observed data
+    soil_priors = pm.sample_prior_predictive(samples=500)
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
@@ -121,6 +123,7 @@ with pm.Model(coords=coords) as socio_model:
                                    )
 
     # likelihood of observed data
+    socio_priors = pm.sample_prior_predictive(samples=500)
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
@@ -172,6 +175,7 @@ with pm.Model(coords=coords) as topo_model:
                                    )
 
     # likelihood of observed data
+    topo_priors = pm.sample_prior_predictive(samples=500)
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
