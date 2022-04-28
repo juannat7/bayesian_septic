@@ -12,3 +12,12 @@ ga_acs_dict = {
     'code': 'B25077_001E',
     'col_name': 'median_hse'
 }
+
+var_dict = {
+    'wtr_dist': 5, 
+    'ppt': 10, 
+    'hydr': 10, 
+    'hse': 5, 
+    'flow': 5, 
+    'dem': 5
+}
