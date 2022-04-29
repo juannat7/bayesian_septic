@@ -49,6 +49,64 @@ with pm.Model(coords=coords) as water_model:
     # fitting using NUTS sampler
     water_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
 
+# distance to water bodies
+with pm.Model(coords=coords) as dist_model:
+    print('fitting water distance model...')
+    # constant data: basin information and variables
+    basin = pm.Data("basin", basin_idx, dims="septic")
+    water_d = pm.Data("water_d", df.water_dist_norm.values, dims="septic")
+
+    # global model parameters
+    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
+    wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
+    mu_c = pm.Normal("mu_c", mu=0, sigma=10)
+    sigma_c = pm.HalfNormal("sigma_c", 10)
+
+    # septic-specific model parameters
+    wtr_dist = pm.Gamma("wtr_dist", alpha=wtr_alpha, beta=wtr_beta, dims="basin")
+    c = pm.Normal("c", mu=mu_c, sigma=sigma_c, dims="basin")
+    
+    # hierarchical bayesian formula
+    failure_theta = pm.math.sigmoid(c[basin_idx] 
+                                    + wtr_dist[basin_idx] * water_d 
+                                   )
+
+    # likelihood of observed data
+    dist_priors = pm.sample_prior_predictive(samples=500)
+    failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
+    
+    # fitting using NUTS sampler
+    dist_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+
+# precipitation
+with pm.Model(coords=coords) as ppt_model:
+    print('fitting precipitation model...')
+    # constant data: basin information and variables
+    basin = pm.Data("basin", basin_idx, dims="septic")
+    ppt_d = pm.Data("ppt_d", df.ppt_2013_norm.values, dims="septic")
+
+    # global model parameters
+    ppt_mu = pm.HalfNormal("ppt_mu", sigma=0.5)
+    ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
+    mu_c = pm.Normal("mu_c", mu=0, sigma=10)
+    sigma_c = pm.HalfNormal("sigma_c", 10)
+
+    # septic-specific model parameters
+    ppt = pm.HalfNormal("ppt", sigma=ppt_sig, dims="basin")
+    c = pm.Normal("c", mu=mu_c, sigma=sigma_c, dims="basin")
+    
+    # hierarchical bayesian formula
+    failure_theta = pm.math.sigmoid(c[basin_idx] 
+                                    + ppt[basin_idx] * ppt_d
+                                   )
+
+    # likelihood of observed data
+    ppt_priors = pm.sample_prior_predictive(samples=500)
+    failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
+    
+    # fitting using NUTS sampler
+    ppt_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    
 # soil model
 with pm.Model(coords=coords) as soil_model:
     print('fitting soil model...')
@@ -186,3 +244,11 @@ traces_dict.update({water_model: water_trace,
                     soil_model: soil_trace, 
                     socio_model: socio_trace, 
                     topo_model: topo_trace})
+
+opt_traces_dict = dict()
+opt_traces_dict.update({dist_model: dist_trace, 
+                        ppt_model: ppt_trace,
+                        water_model: water_trace, 
+                        soil_model: soil_trace, 
+                        socio_model: socio_trace, 
+                        topo_model: topo_trace})
