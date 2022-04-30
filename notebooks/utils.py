@@ -43,7 +43,7 @@ def evaluate_bayes(trace, model, y_actual, samples=500):
     acc = (corr / len(y_pred)) * 100
     return acc, y_pred
 
-def read_data(file_dir, cols, is_balanced=True, train_frac=0.9):
+def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z'):
     """
     Read the initial CSV file used for modeling
     
@@ -139,11 +139,9 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9):
     
     # normalize
     for i, col in enumerate(cols):
-        try:
-            new_var = col + '_norm'
-            df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
-        except:
-            continue
+        new_var = col + '_norm'
+        df = normalize(df, col, new_var, scale=norm_scale)
+        #df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
  
 
     # separate septics based on their locations within a basin
@@ -172,7 +170,7 @@ def match_acs_features(septic_df, acs_df, pri_key, for_key, var_name):
         
     return septic_df
 
-def normalize(df, var, var_norm):
+def normalize(df, var, var_norm, scale='z'):
     """
     Normalize variables
     
@@ -184,6 +182,8 @@ def normalize(df, var, var_norm):
         the name of the variable where normalization is performed
     var_norm: str
         the new normalized variable name
+    scale: str
+        the scale of normalization ['z', 'min_max']
     
     returns:
     --------
@@ -191,7 +191,10 @@ def normalize(df, var, var_norm):
         the updated DataFrame with the normalized variable
     """
     
-    df[var_norm] = (df[var] - df[var].min()) / (df[var].max() - df[var].min())
+    if scale == 'min_max':
+        df[var_norm] = (df[var] - df[var].min()) / (df[var].max() - df[var].min())
+    else:
+        df[var_norm] = (df[var] - df[var].mean()) / df[var].std()
     
     return df
 

@@ -13,7 +13,7 @@ from utils import *
 from params import *
 
 df, basin_idx, basins, coords = read_data(file_dir='../data/hierarchical_septics_v2.csv',
-        cols=['ppt_2013', 'water_dist', 'hydraulic_c','median_hse', 'dem', 'flow'], is_balanced=True)
+        cols=['ppt_2013', 'water_dist', 'hydraulic_c','median_hse', 'dem', 'flow'], is_balanced=True, norm_scale='z')
 
 # water model
 with pm.Model(coords=coords) as water_model:
@@ -26,14 +26,14 @@ with pm.Model(coords=coords) as water_model:
     # global model parameters
     wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
-    ppt_mu = pm.HalfNormal("ppt_mu", sigma=0.5)
+    ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     mu_c = pm.Normal("mu_c", mu=0, sigma=10)
     sigma_c = pm.HalfNormal("sigma_c", 10)
 
     # septic-specific model parameters
-    wtr_dist = pm.Gamma("wtr_dist", alpha=wtr_alpha, beta=wtr_beta, dims="basin")
-    ppt = pm.HalfNormal("ppt", sigma=ppt_sig, dims="basin")
+    wtr_dist = pm.Exponential("wtr_dist", lam=wtr_beta, dims="basin")
+    ppt = pm.Normal("ppt", mu=ppt_mu, sigma=ppt_sig, dims="basin")
     c = pm.Normal("c", mu=mu_c, sigma=sigma_c, dims="basin")
     
     # hierarchical bayesian formula
@@ -63,7 +63,7 @@ with pm.Model(coords=coords) as dist_model:
     sigma_c = pm.HalfNormal("sigma_c", 10)
 
     # septic-specific model parameters
-    wtr_dist = pm.Gamma("wtr_dist", alpha=wtr_alpha, beta=wtr_beta, dims="basin")
+    wtr_dist = pm.Exponential("wtr_dist", lam=wtr_beta, dims="basin")
     c = pm.Normal("c", mu=mu_c, sigma=sigma_c, dims="basin")
     
     # hierarchical bayesian formula
@@ -86,13 +86,13 @@ with pm.Model(coords=coords) as ppt_model:
     ppt_d = pm.Data("ppt_d", df.ppt_2013_norm.values, dims="septic")
 
     # global model parameters
-    ppt_mu = pm.HalfNormal("ppt_mu", sigma=0.5)
+    ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     mu_c = pm.Normal("mu_c", mu=0, sigma=10)
     sigma_c = pm.HalfNormal("sigma_c", 10)
 
     # septic-specific model parameters
-    ppt = pm.HalfNormal("ppt", sigma=ppt_sig, dims="basin")
+    ppt = pm.Normal("ppt", mu=ppt_mu, sigma=ppt_sig, dims="basin")
     c = pm.Normal("c", mu=mu_c, sigma=sigma_c, dims="basin")
     
     # hierarchical bayesian formula
@@ -111,24 +111,24 @@ with pm.Model(coords=coords) as ppt_model:
 with pm.Model(coords=coords) as soil_model:
     print('fitting soil model...')
     # constant data: basin information and variables
-    basin = pm.Data('basin', basin_idx, dims='septic')
-    water_d = pm.Data('water_d', df.water_dist_norm.values, dims='septic')
-    ppt_d = pm.Data('ppt_d', df.ppt_2013_norm.values, dims='septic')
+    basin = pm.Data("basin", basin_idx, dims="septic")
+    water_d = pm.Data("water_d", df.water_dist_norm.values, dims="septic")
+    ppt_d = pm.Data("ppt_d", df.ppt_2013_norm.values, dims="septic")
     hydr_d = pm.Data('hydr_d', df.hydraulic_c_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal('wtr_alpha', sigma=1.)
-    wtr_beta = pm.HalfNormal('wtr_beta', sigma=5)
-    ppt_mu = pm.HalfNormal('ppt_mu', sigma=10)
-    ppt_sig = pm.HalfNormal('ppt_sig', sigma=10)
+    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
+    wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
+    ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
+    ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     mu_c = pm.HalfNormal('mu_c', sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
-    wtr_dist = pm.Gamma('wtr_dist', alpha=wtr_alpha, beta=wtr_beta, dims='basin')
-    ppt = pm.HalfNormal('ppt', sigma=ppt_sig, dims='basin')
-    hydr = pm.Uniform('hydr', lower=0, upper=hydr_sig, dims='basin')
+    wtr_dist = pm.Exponential("wtr_dist", lam=wtr_beta, dims="basin")
+    ppt = pm.Normal("ppt", mu=ppt_mu, sigma=ppt_sig, dims="basin")
+    hydr = pm.Uniform('hydr', lower=-2, upper=hydr_sig, dims='basin')
     c = pm.Normal('c', mu=mu_c, sigma=sigma_c, dims='basin')
     
     # hierarchical bayesian formula
@@ -156,20 +156,20 @@ with pm.Model(coords=coords) as socio_model:
     hse_d = pm.Data('hse_d', df.median_hse_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal('wtr_alpha', sigma=1.)
-    wtr_beta = pm.HalfNormal('wtr_beta', sigma=5)
-    ppt_mu = pm.HalfNormal('ppt_mu', sigma=10)
-    ppt_sig = pm.HalfNormal('ppt_sig', sigma=10)
+    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
+    wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
+    ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
+    ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
     mu_c = pm.HalfNormal('mu_c', sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
-    wtr_dist = pm.Gamma('wtr_dist', alpha=wtr_alpha, beta=wtr_beta, dims='basin')
-    ppt = pm.HalfNormal('ppt', sigma=ppt_sig, dims='basin')
-    hydr = pm.Uniform('hydr', lower=0, upper=hydr_sig, dims='basin')
-    hse = pm.HalfNormal('hse', sigma=hse_sig, dims='basin')
+    wtr_dist = pm.Exponential("wtr_dist", lam=wtr_beta, dims="basin")
+    ppt = pm.Normal("ppt", mu=ppt_mu, sigma=ppt_sig, dims="basin")
+    hydr = pm.Uniform('hydr', lower=-2, upper=hydr_sig, dims='basin')
+    hse = pm.Normal('hse', mu=0, sigma=hse_sig, dims='basin')
     c = pm.Normal('c', mu=mu_c, sigma=sigma_c, dims='basin')
     
     # hierarchical bayesian formula
@@ -196,30 +196,26 @@ with pm.Model(coords=coords) as topo_model:
     ppt_d = pm.Data('ppt_d', df.ppt_2013_norm.values, dims='septic')
     hydr_d = pm.Data('hydr_d', df.hydraulic_c_norm.values, dims='septic')
     hse_d = pm.Data('hse_d', df.median_hse_norm.values, dims='septic')
-    flow_d = pm.Data('flow_d', df.flow_norm.values, dims='septic')
     dem_d = pm.Data('dem_d', df.dem_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal('wtr_alpha', sigma=1.)
-    wtr_beta = pm.HalfNormal('wtr_beta', sigma=5)
-    ppt_mu = pm.HalfNormal('ppt_mu', sigma=10)
-    ppt_sig = pm.HalfNormal('ppt_sig', sigma=10)
+    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
+    wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
+    ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
+    ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
-    flow_alpha = pm.HalfNormal('flow_alpha', sigma=1.)
-    flow_beta = pm.HalfNormal('flow_beta', sigma=5)
     dem_alpha = pm.HalfNormal('dem_alpha', sigma=1.)
     dem_beta = pm.HalfNormal('dem_beta', sigma=5)
     mu_c = pm.HalfNormal('mu_c', sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
-    wtr_dist = pm.Gamma('wtr_dist', alpha=wtr_alpha, beta=wtr_beta, dims='basin')
-    ppt = pm.HalfNormal('ppt', sigma=ppt_sig, dims='basin')
-    hydr = pm.Uniform('hydr', lower=0, upper=hydr_sig, dims='basin')
-    hse = pm.HalfNormal('hse', sigma=hse_sig, dims='basin')
-    flow = pm.Gamma('flow', alpha=flow_alpha, beta=flow_beta, dims='basin')
-    dem = pm.Gamma('dem', alpha=dem_alpha, beta=dem_beta, dims='basin')
+    wtr_dist = pm.Exponential("wtr_dist", lam=wtr_beta, dims="basin")
+    ppt = pm.Normal("ppt", mu=ppt_mu, sigma=ppt_sig, dims="basin")
+    hydr = pm.Uniform('hydr', lower=-2, upper=hydr_sig, dims='basin')
+    hse = pm.Normal('hse', mu=0, sigma=hse_sig, dims='basin')
+    dem = pm.Exponential('dem', lam=dem_beta, dims='basin')
     c = pm.Normal('c', mu=mu_c, sigma=sigma_c, dims='basin')
     
     # hierarchical bayesian formula
@@ -228,7 +224,7 @@ with pm.Model(coords=coords) as topo_model:
                                     + ppt[basin] * ppt_d
                                     + hydr[basin] * hydr_d
                                     + hse[basin] * hse_d
-                                    + flow[basin] * flow_d
+                                    #+ flow[basin] * flow_d
                                     + dem[basin] * dem_d
                                    )
 
@@ -240,15 +236,15 @@ with pm.Model(coords=coords) as topo_model:
     topo_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
     
 traces_dict = dict()
-traces_dict.update({water_model: water_trace, 
-                    soil_model: soil_trace, 
-                    socio_model: socio_trace, 
-                    topo_model: topo_trace})
+traces_dict.update({'Water': water_trace, 
+                    'Soil': soil_trace, 
+                    'Socio': socio_trace, 
+                    'Topo': topo_trace})
 
 opt_traces_dict = dict()
-opt_traces_dict.update({dist_model: dist_trace, 
-                        ppt_model: ppt_trace,
-                        water_model: water_trace, 
-                        soil_model: soil_trace, 
-                        socio_model: socio_trace, 
-                        topo_model: topo_trace})
+opt_traces_dict.update({'Distance': dist_trace, 
+                        'Precip': ppt_trace,
+                        'Water': water_trace, 
+                        'Soil': soil_trace, 
+                        'Socio': socio_trace, 
+                        'Topo': topo_trace})

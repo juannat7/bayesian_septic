@@ -18,6 +18,5 @@ var_dict = {
     'ppt': 10, 
     'hydr': 10, 
     'hse': 5, 
-    'flow': 5, 
     'dem': 5
 }
