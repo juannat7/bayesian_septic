@@ -43,7 +43,7 @@ def evaluate_bayes(trace, model, y_actual, samples=500):
     acc = (corr / len(y_pred)) * 100
     return acc, y_pred
 
-def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z'):
+def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', is_multilevel=False):
     """
     Read the initial CSV file used for modeling
     
@@ -57,6 +57,10 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z'):
         balances class-of-interest; to avoid class imbalance
     train_frac: float
         the fraction for training split
+    norm_scale: str
+        the scaling for normalization, one of ['z', 'min_max']
+    is_multilevel: boolean
+        to indicate whether the coordinates returned include both basin and sub-basin (if True)
     
     returns:
     --------
@@ -135,6 +139,9 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z'):
     
     # keep only relevant columns
     all_cols = cols + ['HU_12_NAME', 'sewageSystem_enc']
+    if is_multilevel:
+        all_cols += ['HU_10_NAME']
+        
     df = df.dropna(subset=all_cols).reset_index(drop=True)
     
     # normalize
@@ -145,10 +152,16 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z'):
  
 
     # separate septics based on their locations within a basin
+    coords = dict()
     basin_idx, basins = pd.factorize(df['HU_12_NAME'])
-    coords = {'basin': basins, 'septic': np.arange(len(df))}
-
-    return df, basin_idx, basins, coords
+    coords.update({'basin': basins, 'septic': np.arange(len(df))})
+    
+    if is_multilevel:
+        catchment_idx, catchments = pd.factorize(df['HU_10_NAME'])
+        coords.update({'catchment': catchments})
+        return df, basin_idx, catchment_idx, coords
+    
+    return df, basin_idx, basins, coords # legacy code to ensure other notebooks work
 
 def match_acs_features(septic_df, acs_df, pri_key, for_key, var_name):
     # extract county name with columns: ['index', 'County']

@@ -11,8 +11,8 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
     - [x] Implement WAIC, LOO, posterior variance checks
     - [x] Applied for 1-layer hierarchical bayesian models
     - [x] Applied for pooled models
+    - [x] Diagnose relative SE (dSE) - measure of relative uncertainty across models 
     - [ ] Check spatial independence/dependence
-    - [ ] Diagnose relative SE (dSE) and relative effective params (dIC)
     - [ ] Applied for multi-level models
 
 The directory of this repository is divided as follows:
