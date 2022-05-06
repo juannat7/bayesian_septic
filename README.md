@@ -7,7 +7,13 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
 - [x] Analysis (Confusion, HDI-ROPE statistical significance, covariations)
 - [x] Topography (flow acc, elevation)
 - [x] Comparison with optimized baseline models (pooled bayesian, SVC, RF, XGB, GBDT)
-- [x] Goodness-of-fit tests (WAIC, LOO, posterior variance checks)
+- Goodness-of-fit tests:
+    - [x] Implement WAIC, LOO, posterior variance checks
+    - [x] Applied for 1-layer hierarchical bayesian models
+    - [x] Applied for pooled models
+    - [ ] Check spatial independence/dependence
+    - [ ] Diagnose relative SE (dSE) and relative effective params (dIC)
+    - [ ] Applied for multi-level models
 
 The directory of this repository is divided as follows:
 ```
