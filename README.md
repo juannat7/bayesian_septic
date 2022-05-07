@@ -12,8 +12,8 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
     - [x] Applied for 1-layer hierarchical bayesian models
     - [x] Applied for pooled models
     - [x] Diagnose relative SE (dSE) - measure of relative uncertainty across models 
+    - [x] Applied for multi-level models
     - [ ] Check spatial independence/dependence
-    - [ ] Applied for multi-level models
 
 The directory of this repository is divided as follows:
 ```
