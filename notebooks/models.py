@@ -17,6 +17,8 @@ df, basin_idx, catchment_idx, coords = read_data(file_dir='../data/hierarchical_
                                                  is_balanced=True, norm_scale='z',
                                                  is_multilevel=True)
 
+tune = 350
+
 ###########################################
 ############ 1-level Bayesian #############
 ###########################################
@@ -53,7 +55,7 @@ with pm.Model(coords=coords) as water_model:
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
-    water_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    water_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
 
 # distance to water bodies
 with pm.Model(coords=coords) as dist_model:
@@ -82,7 +84,7 @@ with pm.Model(coords=coords) as dist_model:
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
-    dist_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    dist_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
 
 # precipitation
 with pm.Model(coords=coords) as ppt_model:
@@ -111,7 +113,7 @@ with pm.Model(coords=coords) as ppt_model:
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
-    ppt_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    ppt_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # soil model
 with pm.Model(coords=coords) as soil_model:
@@ -149,7 +151,7 @@ with pm.Model(coords=coords) as soil_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    soil_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    soil_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # socio-economic model
 with pm.Model(coords=coords) as socio_model:
@@ -191,7 +193,7 @@ with pm.Model(coords=coords) as socio_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    socio_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # topography model
 with pm.Model(coords=coords) as topo_model:
@@ -239,7 +241,7 @@ with pm.Model(coords=coords) as topo_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    topo_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    topo_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 traces_dict = dict()
 traces_dict.update({'L1_Water': water_trace, 
@@ -293,7 +295,7 @@ with pm.Model() as water_pooled_model:
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
-    water_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    water_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
 
 # distance to water bodies
 with pm.Model(coords=coords) as dist_model:
@@ -351,7 +353,7 @@ with pm.Model(coords=coords) as ppt_model:
     failures = pm.Bernoulli("failures", failure_theta, observed=df["sewageSystem_enc"])
     
     # fitting using NUTS sampler
-    ppt_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    ppt_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # soil model
 with pm.Model(coords=coords) as soil_model:
@@ -389,7 +391,7 @@ with pm.Model(coords=coords) as soil_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    soil_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    soil_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # socio-economic model
 with pm.Model(coords=coords) as socio_model:
@@ -431,7 +433,7 @@ with pm.Model(coords=coords) as socio_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    socio_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # topography model
 with pm.Model(coords=coords) as topo_model:
@@ -479,7 +481,7 @@ with pm.Model(coords=coords) as topo_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    topo_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    topo_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 traces_dict.update({'L0_Water': water_trace, 
                     'L0_Soil': soil_trace, 
@@ -534,7 +536,7 @@ with pm.Model(coords=coords) as water_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    water_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    water_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 #distance to water bodies
 with pm.Model(coords=coords) as dist_model:
@@ -568,7 +570,7 @@ with pm.Model(coords=coords) as dist_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    dist_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    dist_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
 
 # precipitation
 with pm.Model(coords=coords) as ppt_model:
@@ -603,7 +605,7 @@ with pm.Model(coords=coords) as ppt_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    ppt_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    ppt_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # soil model
 with pm.Model(coords=coords) as soil_model:
@@ -649,7 +651,7 @@ with pm.Model(coords=coords) as soil_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    soil_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    soil_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # socio-economic model
 with pm.Model(coords=coords) as socio_model:
@@ -700,7 +702,7 @@ with pm.Model(coords=coords) as socio_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    socio_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
 # topography model
 with pm.Model(coords=coords) as topo_model:
@@ -757,7 +759,7 @@ with pm.Model(coords=coords) as topo_model:
     failures = pm.Bernoulli('failures', failure_theta, observed=df['sewageSystem_enc'])
     
     # fitting using NUTS sampler
-    topo_trace = pm.sample(500, tune=200, cores=4, return_inferencedata=True, target_accept=0.99)
+    topo_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
 
 traces_dict.update({'L2_Water': water_trace, 
                     'L2_Soil': soil_trace, 
