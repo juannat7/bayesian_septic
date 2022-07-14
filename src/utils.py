@@ -13,7 +13,7 @@ import rioxarray
 import xarray as xr
 import censusdata
 from sklearn.metrics import confusion_matrix
-from params import *
+from src.params import *
 
 def evaluate_bayes(trace, model, y_actual, samples=500):
     """
@@ -211,7 +211,7 @@ def normalize(df, var, var_norm, scale='z'):
     
     return df
 
-def plot_confusion(y, y_pred):
+def plot_confusion(y, y_pred, title='Confusion Matrix of Septic System Status Forecast\n'):
     """
     Plot confusion matrix given the true y and the predicted y
     
@@ -229,11 +229,11 @@ def plot_confusion(y, y_pred):
     cf = confusion_matrix(y, y_pred, labels=None, sample_weight=None, normalize='true')
     ax = sns.heatmap(cf, annot=True, cmap='Blues')
 
-    ax.set_title('Confusion Matrix of Septic System Status Forecast\n\n')
+    ax.set_title(title)
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
-    ax.xaxis.set_ticklabels(['Repair','No-Repair'])
-    ax.yaxis.set_ticklabels(['Repair','No-Repair'])
+    ax.xaxis.set_ticklabels(['Failing','Non-failing'])
+    ax.yaxis.set_ticklabels(['Failing','Non-failing'])
 
 def build_kdtree(xa):
     """

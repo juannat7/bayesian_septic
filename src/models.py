@@ -9,8 +9,8 @@ Contains all the definition and implementation for the following bayesian hierar
 """
 
 import pymc3 as pm
-from utils import *
-from params import *
+from src.utils import *
+from src.params import *
 
 df, basin_idx, catchment_idx, coords = read_data(file_dir='../data/hierarchical_septics_v3.csv',
                                                  cols=['ppt_2013', 'water_dist', 'hydraulic_c','median_hse', 'dem', 'flow'],
@@ -32,7 +32,6 @@ with pm.Model(coords=coords) as water_model:
     ppt_d = pm.Data("ppt_d", df.ppt_2013_norm.values, dims="septic")
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
@@ -65,7 +64,6 @@ with pm.Model(coords=coords) as dist_model:
     water_d = pm.Data("water_d", df.water_dist_norm.values, dims="septic")
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     mu_c = pm.Normal("mu_c", mu=0, sigma=10)
     sigma_c = pm.HalfNormal("sigma_c", 10)
@@ -125,12 +123,11 @@ with pm.Model(coords=coords) as soil_model:
     hydr_d = pm.Data('hydr_d', df.hydraulic_c_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -164,13 +161,12 @@ with pm.Model(coords=coords) as socio_model:
     hse_d = pm.Data('hse_d', df.median_hse_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -195,9 +191,9 @@ with pm.Model(coords=coords) as socio_model:
     # fitting using NUTS sampler
     socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
-# topography model
+# full model
 with pm.Model(coords=coords) as topo_model:
-    print('fitting topo model...')
+    print('fitting full model...')
     # constant data: basin information and variables
     basin = pm.Data('basin', basin_idx, dims='septic')
     water_d = pm.Data('water_d', df.water_dist_norm.values, dims='septic')
@@ -207,15 +203,13 @@ with pm.Model(coords=coords) as topo_model:
     dem_d = pm.Data('dem_d', df.dem_norm.values, dims='septic')
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
-    dem_alpha = pm.HalfNormal('dem_alpha', sigma=1.)
     dem_beta = pm.HalfNormal('dem_beta', sigma=5)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -272,7 +266,6 @@ with pm.Model() as water_pooled_model:
     ppt_d = pm.Data("ppt_d", df.ppt_2013_norm.values)
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
@@ -305,7 +298,6 @@ with pm.Model(coords=coords) as dist_model:
     water_d = pm.Data("water_d", df.water_dist_norm.values)
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     mu_c = pm.Normal("mu_c", mu=0, sigma=10)
     sigma_c = pm.HalfNormal("sigma_c", 10)
@@ -365,12 +357,11 @@ with pm.Model(coords=coords) as soil_model:
     hydr_d = pm.Data('hydr_d', df.hydraulic_c_norm.values)
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -404,13 +395,12 @@ with pm.Model(coords=coords) as socio_model:
     hse_d = pm.Data('hse_d', df.median_hse_norm.values)
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -435,9 +425,9 @@ with pm.Model(coords=coords) as socio_model:
     # fitting using NUTS sampler
     socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
-# topography model
+# full model
 with pm.Model(coords=coords) as topo_model:
-    print('fitting topo model...')
+    print('fitting full model...')
     # constant data: basin information and variables
     basin = pm.Data('basin', basin_idx)
     water_d = pm.Data('water_d', df.water_dist_norm.values)
@@ -447,15 +437,13 @@ with pm.Model(coords=coords) as topo_model:
     dem_d = pm.Data('dem_d', df.dem_norm.values)
 
     # global model parameters
-    wtr_alpha = pm.HalfNormal("wtr_alpha", sigma=1.)
     wtr_beta = pm.HalfNormal("wtr_beta", sigma=10)
     ppt_mu = pm.Normal("ppt_mu", mu=0, sigma=10)
     ppt_sig = pm.HalfNormal("ppt_sig", sigma=10)
     hydr_sig = pm.HalfNormal('hydr_sig', sigma=10)
     hse_sig = pm.HalfNormal('hse_sig', sigma=5)
-    dem_alpha = pm.HalfNormal('dem_alpha', sigma=1.)
     dem_beta = pm.HalfNormal('dem_beta', sigma=5)
-    mu_c = pm.HalfNormal('mu_c', sigma=10)
+    mu_c = pm.Normal('mu_c', mu=0, sigma=10)
     sigma_c = pm.HalfNormal('sigma_c', sigma=10)
 
     # septic-specific model parameters
@@ -704,9 +692,9 @@ with pm.Model(coords=coords) as socio_model:
     # fitting using NUTS sampler
     socio_trace = pm.sample(500, tune=tune, cores=4, return_inferencedata=True, target_accept=0.99)
     
-# topography model
+# full model
 with pm.Model(coords=coords) as topo_model:
-    print('fitting topo model...')
+    print('fitting full model...')
     # constant data: basin information and variables
     basin = pm.Data('basin', basin_idx, dims='septic')
     catchment = pm.Data('catchment', catchment_idx, dims='septic')
@@ -750,7 +738,6 @@ with pm.Model(coords=coords) as topo_model:
                                     + ppt[basin] * ppt_d
                                     + hydr[basin] * hydr_d
                                     + hse[basin] * hse_d
-                                    #+ flow[basin] * flow_d
                                     + dem[basin] * dem_d
                                    )
 

@@ -1,0 +1,15 @@
+arviz==0.11.4
+CensusData==1.15.post1
+geopandas==0.9.0
+matplotlib==3.4.2
+numpy==1.21.4
+pandas==1.2.5
+pymc3==3.11.4
+rioxarray==0.8.0
+scikit_learn==1.1.1
+scipy==1.6.3
+seaborn==0.9.0
+theano==1.0.5
+Theano_PyMC==1.1.2
+tqdm==4.59.0
+xarray==0.20.1

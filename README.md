@@ -1,5 +1,11 @@
 # Hierarchical Bayesian Modeling of Septic System Failure
-This project aims to apply a hierarchical bayesian modeling to infer the status of septic systems in Georgia. The hierarchy is on the basin level, and the input variables include the following:
+This project aims to apply a hierarchical bayesian modeling to infer the status of septic systems in Georgia. The hierarchy is either on (1) a single level (ie. _sub_-basin) or (2) two-level (ie. basin --> _sub_-basin). Baselines include pooled Bayesian and several ML models (eg. RF, boosting trees, SVC). 
+
+## Quickstart
+1. Install requirements: `pip install -r requirements.txt`
+2. Run notebooks in the sequence, although each notebook is self-contained
+
+## Checklists
 - [x] Precipitation annual maxima
 - [x] Distance to water bodies
 - [x] Soil hydraulic conductivity
@@ -13,17 +19,21 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
     - [x] Applied for pooled models
     - [x] Diagnose relative SE (dSE) - measure of relative uncertainty across models 
     - [x] Applied for multi-level models
-    - [ ] Check spatial independence/dependence
+- [ ] Implement multi-run logic for accuracy checks
+- Analysis:
+    - [ ] Risk map
 
 The directory of this repository is divided as follows:
 ```
 bayesian_septic
 │   README.md    
 └───data
+└───docs
 └───notebooks
-│   │   utils.py (a collection of utility functions)
-    |   params.py (a set of constants)
-    |   models.py (a collection of model definitions and implementations)
+└───src
+    └───utils.py (utility functions)
+    └───params.py (constants)
+    └───models.py (model definitions and implementations)
 ```
 - `data` folder contains all processed data necessary to run the notebooks
-- `notebooks` folder contains processes and analyses relevant to the project
+- `notebooks` folder contains processes and analyses relevant to the research project

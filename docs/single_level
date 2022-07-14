@@ -1,0 +1,107 @@
+digraph {
+	subgraph cluster644 {
+		basin [label="basin
+~
+Data" shape=box style="rounded, filled"]
+		hydr_d [label="hydr_d
+~
+Data" shape=box style="rounded, filled"]
+		hse_d [label="hse_d
+~
+Data" shape=box style="rounded, filled"]
+		water_d [label="water_d
+~
+Data" shape=box style="rounded, filled"]
+		failures [label="failures
+~
+Bernoulli" style=filled]
+		dem_d [label="dem_d
+~
+Data" shape=box style="rounded, filled"]
+		flow_d [label="flow_d
+~
+Data" shape=box style="rounded, filled"]
+		ppt_d [label="ppt_d
+~
+Data" shape=box style="rounded, filled"]
+		label=644 labeljust=r labelloc=b style=rounded
+	}
+	ppt_mu [label="ppt_mu
+~
+Normal"]
+	flow_alpha [label="flow_alpha
+~
+HalfNormal"]
+	dem_beta [label="dem_beta
+~
+HalfNormal"]
+	hydr_sig [label="hydr_sig
+~
+HalfNormal"]
+	ppt_sig [label="ppt_sig
+~
+HalfNormal"]
+	wtr_beta [label="wtr_beta
+~
+HalfNormal"]
+	flow_beta [label="flow_beta
+~
+HalfNormal"]
+	mu_c [label="mu_c
+~
+Normal"]
+	sigma_c [label="sigma_c
+~
+HalfNormal"]
+	hse_sig [label="hse_sig
+~
+HalfNormal"]
+	subgraph cluster229 {
+		ppt [label="ppt
+~
+Normal"]
+		c [label="c
+~
+Normal"]
+		wtr_dist [label="wtr_dist
+~
+Exponential"]
+		flow [label="flow
+~
+Gamma"]
+		dem [label="dem
+~
+Exponential"]
+		hydr [label="hydr
+~
+Uniform"]
+		hse [label="hse
+~
+Normal"]
+		label=229 labeljust=r labelloc=b style=rounded
+	}
+	wtr_beta -> wtr_dist
+	ppt_sig -> ppt
+	ppt_mu -> ppt
+	hydr_sig -> hydr
+	hse_sig -> hse
+	flow_beta -> flow
+	flow_alpha -> flow
+	dem_beta -> dem
+	mu_c -> c
+	sigma_c -> c
+	basin -> failures
+	hydr_d -> failures
+	hse -> failures
+	hse_d -> failures
+	ppt -> failures
+	c -> failures
+	wtr_dist -> failures
+	water_d -> failures
+	flow -> failures
+	dem -> failures
+	hydr -> failures
+	dem_d -> failures
+	flow_d -> failures
+	ppt_d -> failures
+}

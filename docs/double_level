@@ -1,0 +1,129 @@
+digraph {
+	subgraph cluster644 {
+		hydr_d [label="hydr_d
+~
+Data" shape=box style="rounded, filled"]
+		basin [label="basin
+~
+Data" shape=box style="rounded, filled"]
+		ppt_d [label="ppt_d
+~
+Data" shape=box style="rounded, filled"]
+		dem_d [label="dem_d
+~
+Data" shape=box style="rounded, filled"]
+		catchment [label="catchment
+~
+Data" shape=box style="rounded, filled"]
+		failures [label="failures
+~
+Bernoulli" style=filled]
+		hse_d [label="hse_d
+~
+Data" shape=box style="rounded, filled"]
+		water_d [label="water_d
+~
+Data" shape=box style="rounded, filled"]
+		label=644 labeljust=r labelloc=b style=rounded
+	}
+	sigma_inter [label="sigma_inter
+~
+HalfNormal"]
+	hse_sig [label="hse_sig
+~
+HalfNormal"]
+	dem_beta [label="dem_beta
+~
+HalfNormal"]
+	ppt_mu [label="ppt_mu
+~
+Normal"]
+	wtr_beta [label="wtr_beta
+~
+HalfNormal"]
+	hydr_sig [label="hydr_sig
+~
+HalfNormal"]
+	mu_inter [label="mu_inter
+~
+Normal"]
+	ppt_sig [label="ppt_sig
+~
+HalfNormal"]
+	dem_beta_c [label="dem_beta_c
+~
+HalfNormal"]
+	subgraph cluster137 {
+		mu_inter_c [label="mu_inter_c
+~
+Normal"]
+		hse_sig_c [label="hse_sig_c
+~
+HalfNormal"]
+		wtr_beta_c [label="wtr_beta_c
+~
+HalfNormal"]
+		sigma_inter_c [label="sigma_inter_c
+~
+HalfNormal"]
+		ppt_mu_c [label="ppt_mu_c
+~
+Normal"]
+		ppt_sig_c [label="ppt_sig_c
+~
+HalfNormal"]
+		hydr_sig_c [label="hydr_sig_c
+~
+HalfNormal"]
+		label=137 labeljust=r labelloc=b style=rounded
+	}
+	subgraph cluster229 {
+		hydr [label="hydr
+~
+Uniform"]
+		ppt [label="ppt
+~
+Normal"]
+		wtr_dist [label="wtr_dist
+~
+Exponential"]
+		hse [label="hse
+~
+Normal"]
+		c [label="c
+~
+Normal"]
+		dem [label="dem
+~
+Exponential"]
+		label=229 labeljust=r labelloc=b style=rounded
+	}
+	wtr_beta -> wtr_beta_c
+	ppt_mu -> ppt_mu_c
+	ppt_sig -> ppt_sig_c
+	hydr_sig -> hydr_sig_c
+	hse_sig -> hse_sig_c
+	dem_beta -> dem_beta_c
+	mu_inter -> mu_inter_c
+	sigma_inter -> sigma_inter_c
+	wtr_beta_c -> wtr_dist
+	ppt_mu_c -> ppt
+	ppt_sig_c -> ppt
+	hydr_sig_c -> hydr
+	hse_sig_c -> hse
+	dem_beta_c -> dem
+	mu_inter_c -> c
+	sigma_inter_c -> c
+	hydr_d -> failures
+	hydr -> failures
+	basin -> failures
+	ppt -> failures
+	wtr_dist -> failures
+	hse -> failures
+	hse_d -> failures
+	ppt_d -> failures
+	dem_d -> failures
+	c -> failures
+	dem -> failures
+	water_d -> failures
+}
