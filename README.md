@@ -2,8 +2,9 @@
 This project aims to apply a hierarchical bayesian modeling to infer the status of septic systems in Georgia. The hierarchy is either on (1) a single level (ie. _sub_-basin) or (2) two-level (ie. basin --> _sub_-basin). Baselines include pooled Bayesian and several ML models (eg. RF, boosting trees, SVC). 
 
 ## Quickstart
-1. Install requirements: `pip install -r requirements.txt`
-2. Run notebooks in the sequence, although each notebook is self-contained
+1. Create a new environment using Anaconda: `conda create -n septic pymc3`
+2. Install requirements: `pip install -r requirements.txt`
+3. Run notebooks in sequence, although each notebook is self-contained
 
 ## Checklists
 - [x] Precipitation annual maxima
@@ -19,7 +20,7 @@ This project aims to apply a hierarchical bayesian modeling to infer the status 
     - [x] Applied for pooled models
     - [x] Diagnose relative SE (dSE) - measure of relative uncertainty across models 
     - [x] Applied for multi-level models
-- [ ] Implement multi-run logic for accuracy checks
+- [x] Implement multi-run logic for accuracy checks and reproducibility
 - Analysis:
     - [ ] Risk map
 

@@ -211,7 +211,7 @@ def normalize(df, var, var_norm, scale='z'):
     
     return df
 
-def plot_confusion(y, y_pred, title='Confusion Matrix of Septic System Status Forecast\n'):
+def plot_confusion(y, y_pred, title, savedir=None):
     """
     Plot confusion matrix given the true y and the predicted y
     
@@ -227,13 +227,17 @@ def plot_confusion(y, y_pred, title='Confusion Matrix of Septic System Status Fo
     None
     """
     cf = confusion_matrix(y, y_pred, labels=None, sample_weight=None, normalize='true')
-    ax = sns.heatmap(cf, annot=True, cmap='Blues')
+    f, ax = plt.subplots(figsize=(8,6))
+    sns.heatmap(cf, annot=True, cmap='Blues', ax=ax)
 
     ax.set_title(title)
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
     ax.xaxis.set_ticklabels(['Failing','Non-failing'])
     ax.yaxis.set_ticklabels(['Failing','Non-failing'])
+
+    if savedir != None:
+        f.savefig(savedir, dpi=300)
 
 def build_kdtree(xa):
     """
