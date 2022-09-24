@@ -83,59 +83,11 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
 
     # get balanced class (septics needing repair are not as many)
     if is_balanced:
-        num_repair = len(df[df['sewageSystem_enc'] == 0].values)
-        print(f'balancing...\nrepairs: {num_repair/len(df)*100}%, non-repairs: {(len(df) - num_repair)/len(df)*100}%')
+        num = len(df[df['sewageSystem_enc'] == 1].values)
+        print(f'balancing...\nnon-repairs: {num/len(df)*100}%, repairs: {(len(df) - num)/len(df)*100}%')
 
         # split equally
-        df = pd.concat((df[df['sewageSystem_enc'] == 0], df[df['sewageSystem_enc'] == 1][:num_repair]))
-    
-    # get hydraulic information
-    print('processing soil hydraulic data...')
-    df['hydraulic_c'] = df['gSSURGO_GA'].str[0] # get the first value if a system has more than one soil type
-    df['hydraulic_c'] = df['hydraulic_c'].replace(soil_dict)
-    
-    # get housing information
-    print('acquiring housing information...')
-    ga_acs = (censusdata.download(ga_acs_dict['type'], 
-                                 ga_acs_dict['year'],
-                                 censusdata.censusgeo([('state', ga_acs_dict['state']), ('county', '*')]),
-                                 [ga_acs_dict['code']])
-              .reset_index()
-              .rename(columns={ga_acs_dict['code']: 'median_hse'}))
-    
-    df = match_acs_features(
-            df, 
-            ga_acs, 
-            pri_key='tblSGA_Property.county_property',
-            for_key='County',
-            var_name='median_hse'
-        )
-    
-    # get DEM and flow
-    print('processing DEM and flow information...')
-    ga_bdry = gpd.read_file('../../Data/ga_bdry')
-    
-    dem = rioxarray.open_rasterio('../../Data/hydrosheds/hyd_na_dem_15s/hyd_na_dem_15s.tif')
-    flow = rioxarray.open_rasterio('../../Data/hydrosheds/na_acc_15s')
-    
-    ga_dem = dem.rio.clip(ga_bdry.geometry.values, ga_bdry.crs)
-    ga_dem = xr.where(ga_dem > 30000, 0, ga_dem)
-    ga_flow = flow.rio.clip(ga_bdry.geometry.values, ga_bdry.crs)
-    ga_flow = xr.where(ga_flow < 0, 0, ga_flow)
-    
-    ## build spatial nearest neighbour lookup
-    kdtree_dem, dem_coords = build_kdtree(ga_dem)
-    kdtree_flow, flow_coords = build_kdtree(ga_flow)
-    
-    def get_spatial_nearest(row, xa, kdtree, coords):
-        pt = [row["tblSGA_Property.gis_long_property"], row["tblSGA_Property.gis_lat_property"]]
-        dist, index = kdtree.query(pt)
-        coor = coords[index]
-        vals = xa.sel(x=coor[0], y=coor[1])
-        return vals.item()
-    
-    df['dem'] = df.apply(lambda x: get_spatial_nearest(x, xa=ga_dem, kdtree=kdtree_dem, coords=dem_coords), axis=1)
-    df['flow'] = df.apply(lambda x: get_spatial_nearest(x, xa=ga_flow, kdtree=kdtree_flow, coords=flow_coords), axis=1)
+        df = pd.concat((df[df['sewageSystem_enc'] == 0][:num], df[df['sewageSystem_enc'] == 1]))
     
     # keep only relevant columns
     all_cols = cols + ['HU_12_NAME', 'sewageSystem_enc']

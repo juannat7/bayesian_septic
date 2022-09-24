@@ -1,18 +1,15 @@
 digraph {
-	subgraph cluster644 {
+	subgraph "cluster16,156" {
 		hse_d [label="hse_d
+~
+Data" shape=box style="rounded, filled"]
+		dem_d [label="dem_d
 ~
 Data" shape=box style="rounded, filled"]
 		failures [label="failures
 ~
 Bernoulli" style=filled]
-		dem_d [label="dem_d
-~
-Data" shape=box style="rounded, filled"]
 		hydr_d [label="hydr_d
-~
-Data" shape=box style="rounded, filled"]
-		water_d [label="water_d
 ~
 Data" shape=box style="rounded, filled"]
 		basin [label="basin
@@ -21,67 +18,62 @@ Data" shape=box style="rounded, filled"]
 		ppt_d [label="ppt_d
 ~
 Data" shape=box style="rounded, filled"]
-		label=644 labeljust=r labelloc=b style=rounded
+		label="16,156" labeljust=r labelloc=b style=rounded
 	}
-	sigma_c [label="sigma_c
-~
-HalfNormal"]
-	hydr_sig [label="hydr_sig
-~
-HalfNormal"]
-	mu_c [label="mu_c
-~
-Normal"]
-	c [label="c
+	ppt [label="ppt
 ~
 Normal"]
 	hse [label="hse
 ~
 Normal"]
-	hydr [label="hydr
-~
-Uniform"]
-	ppt [label="ppt
-~
-Normal"]
-	hse_sig [label="hse_sig
-~
-HalfNormal"]
 	ppt_mu [label="ppt_mu
 ~
 Normal"]
-	wtr_dist [label="wtr_dist
-~
-Exponential"]
-	wtr_beta [label="wtr_beta
+	hydr_sig [label="hydr_sig
 ~
 HalfNormal"]
-	dem_beta [label="dem_beta
+	hydr [label="hydr
 ~
-HalfNormal"]
+Normal"]
 	dem [label="dem
 ~
 Exponential"]
+	c [label="c
+~
+Normal"]
+	dem_beta [label="dem_beta
+~
+HalfNormal"]
+	mu_c [label="mu_c
+~
+Normal"]
+	sigma_c [label="sigma_c
+~
+HalfNormal"]
+	hse_sig [label="hse_sig
+~
+HalfNormal"]
 	ppt_sig [label="ppt_sig
 ~
 HalfNormal"]
-	wtr_beta -> wtr_dist
+	hydr_mu [label="hydr_mu
+~
+Normal"]
 	ppt_mu -> ppt
 	ppt_sig -> ppt
 	hydr_sig -> hydr
+	hydr_mu -> hydr
 	hse_sig -> hse
 	dem_beta -> dem
 	sigma_c -> c
 	mu_c -> c
-	c -> failures
 	hse_d -> failures
-	dem_d -> failures
-	hse -> failures
-	hydr -> failures
-	hydr_d -> failures
 	ppt -> failures
-	wtr_dist -> failures
+	hse -> failures
+	dem_d -> failures
 	dem -> failures
+	c -> failures
+	hydr_d -> failures
+	hydr -> failures
 	ppt_d -> failures
-	water_d -> failures
 }

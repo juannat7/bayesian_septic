@@ -1,57 +1,51 @@
 digraph {
-	subgraph cluster644 {
-		hse_d [label="hse_d
+	subgraph "cluster16,156" {
+		failures [label="failures
 ~
-Data" shape=box style="rounded, filled"]
-		basin [label="basin
-~
-Data" shape=box style="rounded, filled"]
+Bernoulli" style=filled]
 		ppt_d [label="ppt_d
 ~
 Data" shape=box style="rounded, filled"]
-		dem_d [label="dem_d
+		hse_d [label="hse_d
 ~
 Data" shape=box style="rounded, filled"]
 		hydr_d [label="hydr_d
 ~
 Data" shape=box style="rounded, filled"]
-		failures [label="failures
-~
-Bernoulli" style=filled]
-		water_d [label="water_d
+		dem_d [label="dem_d
 ~
 Data" shape=box style="rounded, filled"]
-		label=644 labeljust=r labelloc=b style=rounded
+		basin [label="basin
+~
+Data" shape=box style="rounded, filled"]
+		label="16,156" labeljust=r labelloc=b style=rounded
 	}
-	sigma_c [label="sigma_c
+	ppt_sig [label="ppt_sig
 ~
 HalfNormal"]
-	hse_sig [label="hse_sig
+	hydr_mu [label="hydr_mu
 ~
-HalfNormal"]
+Normal"]
 	ppt_mu [label="ppt_mu
 ~
 Normal"]
-	wtr_beta [label="wtr_beta
-~
-HalfNormal"]
-	dem_beta [label="dem_beta
+	sigma_c [label="sigma_c
 ~
 HalfNormal"]
 	mu_c [label="mu_c
 ~
 Normal"]
-	ppt_sig [label="ppt_sig
+	hse_sig [label="hse_sig
+~
+HalfNormal"]
+	dem_beta [label="dem_beta
 ~
 HalfNormal"]
 	hydr_sig [label="hydr_sig
 ~
 HalfNormal"]
-	subgraph cluster229 {
-		c [label="c
-~
-Normal"]
-		wtr_dist [label="wtr_dist
+	subgraph cluster312 {
+		dem [label="dem
 ~
 Exponential"]
 		hse [label="hse
@@ -59,33 +53,31 @@ Exponential"]
 Normal"]
 		hydr [label="hydr
 ~
-Uniform"]
-		dem [label="dem
-~
-Exponential"]
+Normal"]
 		ppt [label="ppt
 ~
 Normal"]
-		label=229 labeljust=r labelloc=b style=rounded
+		c [label="c
+~
+Normal"]
+		label=312 labeljust=r labelloc=b style=rounded
 	}
-	wtr_beta -> wtr_dist
-	ppt_sig -> ppt
 	ppt_mu -> ppt
+	ppt_sig -> ppt
+	hydr_mu -> hydr
 	hydr_sig -> hydr
 	hse_sig -> hse
 	dem_beta -> dem
 	sigma_c -> c
 	mu_c -> c
-	hse_d -> failures
-	ppt -> failures
-	basin -> failures
-	ppt_d -> failures
-	wtr_dist -> failures
-	hse -> failures
-	hydr_d -> failures
-	dem_d -> failures
-	hydr -> failures
-	water_d -> failures
 	dem -> failures
+	ppt_d -> failures
+	hse_d -> failures
+	hydr_d -> failures
+	hse -> failures
+	dem_d -> failures
+	ppt -> failures
+	hydr -> failures
 	c -> failures
+	basin -> failures
 }
