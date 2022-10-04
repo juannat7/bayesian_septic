@@ -12,12 +12,13 @@ import pymc3 as pm
 from src.utils import *
 from src.params import *
 
-df, basin_idx, catchment_idx, coords = read_data(file_dir='../data/hierarchical_septics_v4.csv',
+df, basin_idx, catchment_idx, coords = read_data(file_dir='../data/hierarchical_septics_v5.csv',
                                                  cols=['ppt_2021', 'hydraulic_c','median_hse', 'dem'],
                                                  is_balanced=True, norm_scale='z',
-                                                 is_multilevel=True)
+                                                #  is_multilevel=True
+                                                )
 
-tune = 1000
+tune = 350
 rs = 100
 
 ###########################################

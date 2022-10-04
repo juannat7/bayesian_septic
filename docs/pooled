@@ -1,62 +1,62 @@
 digraph {
-	subgraph "cluster16,156" {
-		hse_d [label="hse_d
-~
-Data" shape=box style="rounded, filled"]
-		dem_d [label="dem_d
-~
-Data" shape=box style="rounded, filled"]
-		failures [label="failures
-~
-Bernoulli" style=filled]
-		hydr_d [label="hydr_d
-~
-Data" shape=box style="rounded, filled"]
+	subgraph "cluster120,827" {
 		basin [label="basin
+~
+Data" shape=box style="rounded, filled"]
+		hse_d [label="hse_d
 ~
 Data" shape=box style="rounded, filled"]
 		ppt_d [label="ppt_d
 ~
 Data" shape=box style="rounded, filled"]
-		label="16,156" labeljust=r labelloc=b style=rounded
+		dem_d [label="dem_d
+~
+Data" shape=box style="rounded, filled"]
+		hydr_d [label="hydr_d
+~
+Data" shape=box style="rounded, filled"]
+		failures [label="failures
+~
+Bernoulli" style=filled]
+		label="120,827" labeljust=r labelloc=b style=rounded
 	}
-	ppt [label="ppt
-~
-Normal"]
-	hse [label="hse
-~
-Normal"]
 	ppt_mu [label="ppt_mu
 ~
 Normal"]
-	hydr_sig [label="hydr_sig
+	mu_c [label="mu_c
+~
+Normal"]
+	hse_sig [label="hse_sig
 ~
 HalfNormal"]
 	hydr [label="hydr
 ~
 Normal"]
-	dem [label="dem
-~
-Exponential"]
-	c [label="c
-~
-Normal"]
-	dem_beta [label="dem_beta
+	hydr_sig [label="hydr_sig
 ~
 HalfNormal"]
-	mu_c [label="mu_c
-~
-Normal"]
 	sigma_c [label="sigma_c
 ~
 HalfNormal"]
-	hse_sig [label="hse_sig
+	hse [label="hse
 ~
-HalfNormal"]
+Normal"]
+	dem [label="dem
+~
+Exponential"]
 	ppt_sig [label="ppt_sig
 ~
 HalfNormal"]
+	dem_beta [label="dem_beta
+~
+HalfNormal"]
+	c [label="c
+~
+Normal"]
 	hydr_mu [label="hydr_mu
+~
+Normal"]
+	ppt [label="ppt
 ~
 Normal"]
 	ppt_mu -> ppt
@@ -67,13 +67,13 @@ Normal"]
 	dem_beta -> dem
 	sigma_c -> c
 	mu_c -> c
-	hse_d -> failures
-	ppt -> failures
-	hse -> failures
-	dem_d -> failures
-	dem -> failures
-	c -> failures
-	hydr_d -> failures
-	hydr -> failures
 	ppt_d -> failures
+	hse_d -> failures
+	dem_d -> failures
+	hydr_d -> failures
+	c -> failures
+	hydr -> failures
+	hse -> failures
+	dem -> failures
+	ppt -> failures
 }

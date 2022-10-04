@@ -1,9 +1,6 @@
 digraph {
-	subgraph "cluster16,156" {
-		failures [label="failures
-~
-Bernoulli" style=filled]
-		ppt_d [label="ppt_d
+	subgraph "cluster120,827" {
+		dem_d [label="dem_d
 ~
 Data" shape=box style="rounded, filled"]
 		hse_d [label="hse_d
@@ -12,43 +9,49 @@ Data" shape=box style="rounded, filled"]
 		hydr_d [label="hydr_d
 ~
 Data" shape=box style="rounded, filled"]
-		dem_d [label="dem_d
+		ppt_d [label="ppt_d
 ~
 Data" shape=box style="rounded, filled"]
 		basin [label="basin
 ~
 Data" shape=box style="rounded, filled"]
-		label="16,156" labeljust=r labelloc=b style=rounded
+		failures [label="failures
+~
+Bernoulli" style=filled]
+		label="120,827" labeljust=r labelloc=b style=rounded
 	}
-	ppt_sig [label="ppt_sig
-~
-HalfNormal"]
 	hydr_mu [label="hydr_mu
-~
-Normal"]
-	ppt_mu [label="ppt_mu
-~
-Normal"]
-	sigma_c [label="sigma_c
-~
-HalfNormal"]
-	mu_c [label="mu_c
 ~
 Normal"]
 	hse_sig [label="hse_sig
 ~
 HalfNormal"]
-	dem_beta [label="dem_beta
+	sigma_c [label="sigma_c
 ~
 HalfNormal"]
+	ppt_sig [label="ppt_sig
+~
+HalfNormal"]
+	mu_c [label="mu_c
+~
+Normal"]
 	hydr_sig [label="hydr_sig
 ~
 HalfNormal"]
-	subgraph cluster312 {
+	ppt_mu [label="ppt_mu
+~
+Normal"]
+	dem_beta [label="dem_beta
+~
+HalfNormal"]
+	subgraph cluster352 {
 		dem [label="dem
 ~
 Exponential"]
 		hse [label="hse
+~
+Normal"]
+		c [label="c
 ~
 Normal"]
 		hydr [label="hydr
@@ -57,10 +60,7 @@ Normal"]
 		ppt [label="ppt
 ~
 Normal"]
-		c [label="c
-~
-Normal"]
-		label=312 labeljust=r labelloc=b style=rounded
+		label=352 labeljust=r labelloc=b style=rounded
 	}
 	ppt_mu -> ppt
 	ppt_sig -> ppt
@@ -68,16 +68,16 @@ Normal"]
 	hydr_sig -> hydr
 	hse_sig -> hse
 	dem_beta -> dem
-	sigma_c -> c
 	mu_c -> c
+	sigma_c -> c
 	dem -> failures
-	ppt_d -> failures
-	hse_d -> failures
-	hydr_d -> failures
-	hse -> failures
 	dem_d -> failures
-	ppt -> failures
-	hydr -> failures
+	hse -> failures
+	hse_d -> failures
 	c -> failures
+	hydr -> failures
+	hydr_d -> failures
+	ppt -> failures
+	ppt_d -> failures
 	basin -> failures
 }

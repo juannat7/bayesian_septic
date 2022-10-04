@@ -78,8 +78,8 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     # encode categorical sewage system
     enc, _ = pd.factorize(df['sewageSystem'])
     df['sewageSystem_enc'] = enc
-    df.loc[df['sewageSystem_enc'] == 0, 'sewageSystem_enc'] = 0 # need repair
-    df.loc[(df['sewageSystem_enc'] == 1) | (df['sewageSystem_enc'] == 2), 'sewageSystem_enc'] = 1 # new + addition
+    df.loc[df['sewageSystem_enc'] == 1, 'sewageSystem_enc'] = 1 # need repair
+    df.loc[(df['sewageSystem_enc'] == 0) | (df['sewageSystem_enc'] == 2), 'sewageSystem_enc'] = 0 # new + addition
 
     # get balanced class (septics needing repair are not as many)
     if is_balanced:
@@ -90,9 +90,9 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
         df = pd.concat((df[df['sewageSystem_enc'] == 0][:num], df[df['sewageSystem_enc'] == 1]))
     
     # keep only relevant columns
-    all_cols = cols + ['HU_12_NAME', 'sewageSystem_enc']
+    all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
     if is_multilevel:
-        all_cols += ['HU_10_NAME']
+        all_cols += ['HU_12_NAME']
         
     df = df.dropna(subset=all_cols).reset_index(drop=True)
     
@@ -105,11 +105,11 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
 
     # separate septics based on their locations within a basin
     coords = dict()
-    basin_idx, basins = pd.factorize(df['HU_12_NAME'])
+    basin_idx, basins = pd.factorize(df['HU_10_NAME'])
     coords.update({'basin': basins, 'septic': np.arange(len(df))})
     
     if is_multilevel:
-        catchment_idx, catchments = pd.factorize(df['HU_10_NAME'])
+        catchment_idx, catchments = pd.factorize(df['HU_12_NAME'])
         coords.update({'catchment': catchments})
         return df, basin_idx, catchment_idx, coords
     
@@ -180,16 +180,17 @@ def plot_confusion(y, y_pred, title, savedir=None):
     """
     cf = confusion_matrix(y, y_pred, labels=None, sample_weight=None, normalize='true')
     f, ax = plt.subplots(figsize=(8,6))
-    sns.heatmap(cf, annot=True, cmap='Blues', ax=ax)
+    sns.heatmap(cf, annot=True, cmap='Blues', annot_kws={'fontsize': 24}, ax=ax)
 
     ax.set_title(title)
-    ax.set_xlabel('\nPredicted Values')
-    ax.set_ylabel('Actual Values ')
+    ax.set_xlabel('\nPredicted Values', fontsize=20)
+    ax.set_ylabel('Actual Values ', fontsize=20)
     ax.xaxis.set_ticklabels(['Failing','Non-failing'])
     ax.yaxis.set_ticklabels(['Failing','Non-failing'])
+    ax.tick_params(labelsize=18)
 
     if savedir != None:
-        f.savefig(savedir, dpi=300)
+        f.savefig(savedir, dpi=300, bbox_inches='tight')
 
 def build_kdtree(xa):
     """
