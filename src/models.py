@@ -18,7 +18,7 @@ df, basin_idx, catchment_idx, coords = read_data(file_dir='../data/hierarchical_
                                                 #  is_multilevel=True
                                                 )
 
-tune = 350
+tune = 100
 rs = 100
 
 ###########################################

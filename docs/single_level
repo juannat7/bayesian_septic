@@ -1,35 +1,29 @@
 digraph {
-	subgraph "cluster120,827" {
-		dem_d [label="dem_d
+	subgraph "cluster201,168" {
+		basin [label="basin
 ~
 Data" shape=box style="rounded, filled"]
-		hse_d [label="hse_d
+		dem_d [label="dem_d
 ~
 Data" shape=box style="rounded, filled"]
 		hydr_d [label="hydr_d
 ~
 Data" shape=box style="rounded, filled"]
-		ppt_d [label="ppt_d
-~
-Data" shape=box style="rounded, filled"]
-		basin [label="basin
-~
-Data" shape=box style="rounded, filled"]
 		failures [label="failures
 ~
 Bernoulli" style=filled]
-		label="120,827" labeljust=r labelloc=b style=rounded
+		hse_d [label="hse_d
+~
+Data" shape=box style="rounded, filled"]
+		ppt_d [label="ppt_d
+~
+Data" shape=box style="rounded, filled"]
+		label="201,168" labeljust=r labelloc=b style=rounded
 	}
-	hydr_mu [label="hydr_mu
+	ppt_mu [label="ppt_mu
 ~
 Normal"]
 	hse_sig [label="hse_sig
-~
-HalfNormal"]
-	sigma_c [label="sigma_c
-~
-HalfNormal"]
-	ppt_sig [label="ppt_sig
 ~
 HalfNormal"]
 	mu_c [label="mu_c
@@ -38,29 +32,35 @@ Normal"]
 	hydr_sig [label="hydr_sig
 ~
 HalfNormal"]
-	ppt_mu [label="ppt_mu
+	sigma_c [label="sigma_c
 ~
-Normal"]
+HalfNormal"]
 	dem_beta [label="dem_beta
 ~
 HalfNormal"]
-	subgraph cluster352 {
-		dem [label="dem
-~
-Exponential"]
-		hse [label="hse
+	hydr_mu [label="hydr_mu
 ~
 Normal"]
+	ppt_sig [label="ppt_sig
+~
+HalfNormal"]
+	subgraph cluster353 {
 		c [label="c
 ~
 Normal"]
 		hydr [label="hydr
 ~
 Normal"]
+		hse [label="hse
+~
+Normal"]
 		ppt [label="ppt
 ~
 Normal"]
-		label=352 labeljust=r labelloc=b style=rounded
+		dem [label="dem
+~
+Exponential"]
+		label=353 labeljust=r labelloc=b style=rounded
 	}
 	ppt_mu -> ppt
 	ppt_sig -> ppt
@@ -68,16 +68,16 @@ Normal"]
 	hydr_sig -> hydr
 	hse_sig -> hse
 	dem_beta -> dem
-	mu_c -> c
 	sigma_c -> c
-	dem -> failures
-	dem_d -> failures
-	hse -> failures
-	hse_d -> failures
+	mu_c -> c
+	basin -> failures
 	c -> failures
 	hydr -> failures
+	dem_d -> failures
+	hse -> failures
 	hydr_d -> failures
+	hse_d -> failures
 	ppt -> failures
 	ppt_d -> failures
-	basin -> failures
+	dem -> failures
 }

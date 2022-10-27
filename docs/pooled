@@ -1,62 +1,62 @@
 digraph {
-	subgraph "cluster120,827" {
-		basin [label="basin
-~
-Data" shape=box style="rounded, filled"]
-		hse_d [label="hse_d
-~
-Data" shape=box style="rounded, filled"]
-		ppt_d [label="ppt_d
-~
-Data" shape=box style="rounded, filled"]
+	subgraph "cluster201,168" {
 		dem_d [label="dem_d
-~
-Data" shape=box style="rounded, filled"]
-		hydr_d [label="hydr_d
 ~
 Data" shape=box style="rounded, filled"]
 		failures [label="failures
 ~
 Bernoulli" style=filled]
-		label="120,827" labeljust=r labelloc=b style=rounded
+		hydr_d [label="hydr_d
+~
+Data" shape=box style="rounded, filled"]
+		ppt_d [label="ppt_d
+~
+Data" shape=box style="rounded, filled"]
+		hse_d [label="hse_d
+~
+Data" shape=box style="rounded, filled"]
+		basin [label="basin
+~
+Data" shape=box style="rounded, filled"]
+		label="201,168" labeljust=r labelloc=b style=rounded
 	}
-	ppt_mu [label="ppt_mu
-~
-Normal"]
-	mu_c [label="mu_c
-~
-Normal"]
-	hse_sig [label="hse_sig
-~
-HalfNormal"]
-	hydr [label="hydr
-~
-Normal"]
-	hydr_sig [label="hydr_sig
-~
-HalfNormal"]
-	sigma_c [label="sigma_c
-~
-HalfNormal"]
-	hse [label="hse
-~
-Normal"]
-	dem [label="dem
-~
-Exponential"]
-	ppt_sig [label="ppt_sig
-~
-HalfNormal"]
 	dem_beta [label="dem_beta
 ~
 HalfNormal"]
 	c [label="c
 ~
 Normal"]
+	ppt_sig [label="ppt_sig
+~
+HalfNormal"]
+	hydr_sig [label="hydr_sig
+~
+HalfNormal"]
 	hydr_mu [label="hydr_mu
 ~
 Normal"]
+	mu_c [label="mu_c
+~
+Normal"]
+	ppt_mu [label="ppt_mu
+~
+Normal"]
 	ppt [label="ppt
+~
+Normal"]
+	hydr [label="hydr
+~
+Normal"]
+	hse_sig [label="hse_sig
+~
+HalfNormal"]
+	sigma_c [label="sigma_c
+~
+HalfNormal"]
+	dem [label="dem
+~
+Exponential"]
+	hse [label="hse
 ~
 Normal"]
 	ppt_mu -> ppt
@@ -65,15 +65,15 @@ Normal"]
 	hydr_mu -> hydr
 	hse_sig -> hse
 	dem_beta -> dem
-	sigma_c -> c
 	mu_c -> c
+	sigma_c -> c
+	dem_d -> failures
+	c -> failures
+	hydr_d -> failures
 	ppt_d -> failures
 	hse_d -> failures
-	dem_d -> failures
-	hydr_d -> failures
-	c -> failures
-	hydr -> failures
-	hse -> failures
-	dem -> failures
 	ppt -> failures
+	hydr -> failures
+	dem -> failures
+	hse -> failures
 }

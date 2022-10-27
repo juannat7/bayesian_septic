@@ -84,10 +84,11 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     # get balanced class (septics needing repair are not as many)
     if is_balanced:
         num = len(df[df['sewageSystem_enc'] == 1].values)
-        print(f'balancing...\nnon-repairs: {num/len(df)*100}%, repairs: {(len(df) - num)/len(df)*100}%')
+        print(f'balancing...\nrepairs: {num/len(df)*100}%, non-repairs: {(len(df) - num)/len(df)*100}%')
 
         # split equally
-        df = pd.concat((df[df['sewageSystem_enc'] == 0][:num], df[df['sewageSystem_enc'] == 1]))
+        idx = df[df['sewageSystem_enc'] == 0]
+        df = pd.concat((df.sample(n=len(idx), random_state=42), df[df['sewageSystem_enc'] == 1]))
     
     # keep only relevant columns
     all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
