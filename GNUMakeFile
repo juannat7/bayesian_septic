@@ -1,0 +1,40 @@
+all: train-bayes-model-dev
+.PHONY: train-bayes-model train-bayes-model-dev
+
+test:
+	echo 1
+
+update-poetry:
+	cat requirements.txt|grep -v '#'|xargs poetry add
+
+clean:
+	rm -rf __pycache__
+
+update-req: 
+	pip freeze > requirements.txt
+
+dependency: requirements.txt
+	pip install -r requirements.txt
+
+dependency-poetry:
+	poetry install
+
+train-bayes-water-model: dependency-poetry
+	@read -p "Enter Model Name (No need to include file extension): " model_name; \
+	poetry run python main.py -m train_bayes_model -o $${model_name} -mo water_model
+
+train-bayes-soil-model: dependency-poetry
+	@read -p "Enter Model Name (No need to include file extension): " model_name; \
+	poetry run python main.py -m train_bayes_model -o $${model_name} -mo soil_model
+
+train-bayes-topo-model: dependency-poetry
+	@read -p "Enter Model Name (No need to include file extension): " model_name; \
+	poetry run python main.py -m train_bayes_model -o $${model_name} -mo topo_model
+
+train-bayes-socio-model: dependency-poetry
+	@read -p "Enter Model Name (No need to include file extension): " model_name; \
+	poetry run python main.py -m train_bayes_model -o $${model_name} -mo socio_model
+
+train-bayes-model-dev: dependency-poetry clean 
+	@read -p "Enter Model Name (No need to include file extension): " model_name; \
+	poetry run python main.py -m train_bayes_model -o $$model_name -mo full_model

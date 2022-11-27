@@ -1,21 +1,14 @@
-import arviz as az
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pymc3 as pm
-from tqdm import tqdm
-import theano.tensor as tt
-import scipy.stats as stats 
-import geopandas as gpd
-import seaborn as sns
+import pymc as pm
 import scipy
-import rioxarray
-import xarray as xr
-import censusdata
+import seaborn as sns
 from sklearn.metrics import confusion_matrix
-from src.params import *
 
-def evaluate_bayes(trace, model, y_actual, samples=500):
+
+def evaluate_bayes(trace, model, y_actual):
     """
     Evaluates the accuracy of hierarchical bayesian model
     
@@ -27,7 +20,7 @@ def evaluate_bayes(trace, model, y_actual, samples=500):
         the model definition
     y_actual: numpy array
         the actual septic status
-    samples: int
+    samples: int (deprecated)
         the number of sampling done per each data point
     
     returns:
@@ -35,13 +28,15 @@ def evaluate_bayes(trace, model, y_actual, samples=500):
     acc: float
         the accuracy of the model
     """
-    ppc = pm.sample_posterior_predictive(trace, model=model, samples=samples)
+    ppc = pm.sample_posterior_predictive(trace, model=model)
     y_pred = ppc['failures'].mean(axis=0)
-    y_pred = [1 if i >0.5 else 0 for i in y_pred] # if p > 0.5, return 1, else return 0
+    # if p > 0.5, return 1, else return 0
+    y_pred = [1 if i > 0.5 else 0 for i in y_pred]
     corr = np.sum(np.array(y_actual) == np.array(y_pred))
-    
+
     acc = (corr / len(y_pred)) * 100
     return acc, y_pred
+
 
 def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', is_multilevel=False):
     """
@@ -78,43 +73,46 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     # encode categorical sewage system
     enc, _ = pd.factorize(df['sewageSystem'])
     df['sewageSystem_enc'] = enc
-    df.loc[df['sewageSystem_enc'] == 1, 'sewageSystem_enc'] = 1 # need repair
-    df.loc[(df['sewageSystem_enc'] == 0) | (df['sewageSystem_enc'] == 2), 'sewageSystem_enc'] = 0 # new + addition
+    df.loc[df['sewageSystem_enc'] == 1, 'sewageSystem_enc'] = 1  # need repair
+    df.loc[(df['sewageSystem_enc'] == 0) | (df['sewageSystem_enc'] == 2), 'sewageSystem_enc'] = 0  # new + addition
 
     # get balanced class (septics needing repair are not as many)
     if is_balanced:
         num = len(df[df['sewageSystem_enc'] == 1].values)
-        print(f'balancing...\nrepairs: {num/len(df)*100}%, non-repairs: {(len(df) - num)/len(df)*100}%')
+        print(
+            f'balancing...\nrepairs: {num/len(df)*100}%, non-repairs: {(len(df) - num)/len(df)*100}%')
 
         # split equally
         idx = df[df['sewageSystem_enc'] == 0]
-        df = pd.concat((df.sample(n=len(idx), random_state=42), df[df['sewageSystem_enc'] == 1]))
-    
+        df = pd.concat((df.sample(n=len(idx), random_state=42),
+                       df[df['sewageSystem_enc'] == 1]))
+
     # keep only relevant columns
     all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
     if is_multilevel:
         all_cols += ['HU_12_NAME']
-        
+
     df = df.dropna(subset=all_cols).reset_index(drop=True)
-    
+
     # normalize
     for i, col in enumerate(cols):
         new_var = col + '_norm'
         df = normalize(df, col, new_var, scale=norm_scale)
-        #df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
- 
+        # df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
 
     # separate septics based on their locations within a basin
     coords = dict()
     basin_idx, basins = pd.factorize(df['HU_10_NAME'])
     coords.update({'basin': basins, 'septic': np.arange(len(df))})
-    
+
     if is_multilevel:
         catchment_idx, catchments = pd.factorize(df['HU_12_NAME'])
         coords.update({'catchment': catchments})
         return df, basin_idx, catchment_idx, coords
-    
-    return df, basin_idx, basins, coords # legacy code to ensure other notebooks work
+
+    # legacy code to ensure other notebooks work
+    return df, basin_idx, basins, coords
+
 
 def match_acs_features(septic_df, acs_df, pri_key, for_key, var_name):
     # extract county name with columns: ['index', 'County']
@@ -126,15 +124,16 @@ def match_acs_features(septic_df, acs_df, pri_key, for_key, var_name):
                   .upper())
 
         acs_df.loc[i, for_key] = county
-        
+
     # match with our septic systems with columns ['tblSGA_Property.county_property']
     for i, row in septic_df.iterrows():
         septic_cty = str(row[pri_key])
-        match_idx = acs_df.index[acs_df[for_key]==septic_cty][0]
+        match_idx = acs_df.index[acs_df[for_key] == septic_cty][0]
         median_hse = acs_df[var_name][match_idx]
-        septic_df.loc[i,var_name] = median_hse
-        
+        septic_df.loc[i, var_name] = median_hse
+
     return septic_df
+
 
 def normalize(df, var, var_norm, scale='z'):
     """
@@ -156,13 +155,15 @@ def normalize(df, var, var_norm, scale='z'):
     df: DataFrame
         the updated DataFrame with the normalized variable
     """
-    
+
     if scale == 'min_max':
-        df[var_norm] = (df[var] - df[var].min()) / (df[var].max() - df[var].min())
+        df[var_norm] = (df[var] - df[var].min()) / \
+            (df[var].max() - df[var].min())
     else:
         df[var_norm] = (df[var] - df[var].mean()) / df[var].std()
-    
+
     return df
+
 
 def plot_confusion(y, y_pred, title, savedir=None):
     """
@@ -179,19 +180,22 @@ def plot_confusion(y, y_pred, title, savedir=None):
     --------
     None
     """
-    cf = confusion_matrix(y, y_pred, labels=None, sample_weight=None, normalize='true')
-    f, ax = plt.subplots(figsize=(8,6))
-    sns.heatmap(cf, annot=True, cmap='Blues', annot_kws={'fontsize': 24}, ax=ax)
+    cf = confusion_matrix(y, y_pred, labels=None,
+                          sample_weight=None, normalize='true')
+    f, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(cf, annot=True, cmap='Blues',
+                annot_kws={'fontsize': 24}, ax=ax)
 
     ax.set_title(title)
     ax.set_xlabel('\nPredicted Values', fontsize=20)
     ax.set_ylabel('Actual Values ', fontsize=20)
-    ax.xaxis.set_ticklabels(['Failing','Non-failing'])
-    ax.yaxis.set_ticklabels(['Failing','Non-failing'])
+    ax.xaxis.set_ticklabels(['Failing', 'Non-failing'])
+    ax.yaxis.set_ticklabels(['Failing', 'Non-failing'])
     ax.tick_params(labelsize=18)
 
-    if savedir != None:
+    if savedir is not None:
         f.savefig(savedir, dpi=300, bbox_inches='tight')
+
 
 def build_kdtree(xa):
     """
@@ -212,6 +216,6 @@ def build_kdtree(xa):
     coords = []
     for x in xa.x.values:
         for y in xa.y.values:
-            coords.append([x,y])
-            
+            coords.append([x, y])
+
     return scipy.spatial.KDTree(coords), coords
