@@ -1,0 +1,52 @@
+{
+    "model_type": "HierarchicalBayesian",
+    "params": {
+        "main_data": "hierarchical_septics_v4.csv",
+        "default_columns": "['ppt_2021', 'hydraulic_c', 'median_hse', 'dem']",
+        "observe_column": "sewageSystem_enc",
+        "evaluate_times": 5,
+        "is_balanced": "True",
+        "is_multilevel": "True",
+        "rs":100,
+        "tune":100,
+        "water_model": {
+            "ppt_mu": {"model_type": "Normal", "mu": 0, "sigma": 10}, 
+            "ppt_sig": {"model_type": "HalfNormal", "sigma": 10}, 
+            "mu_inter": {"model_type": "Normal", "mu": 0, "sigma": 10}, 
+            "sigma_inter": {"model_type": "HalfNormal", "sigma": 10},
+            "ppt_mu_c": {"model_type": "HalfNormal", "sigma": 10},
+            "mu_inter_c": {"model_type": "HalfNormal", "sigma": 10}
+        },
+        "soil_model": {
+            "hydr_mu": {"model_type": "Normal","mu": 0, "sigma": 10}, 
+            "hydr_sig": {"model_type": "HalfNormal", "sigma": 10}, 
+            "mu_c": {"model_type": "Normal","mu": 0, "sigma": 10}, 
+            "sigma_c": {"model_type": "HalfNormal", "sigma": 10}
+        },
+        "topo_model": {
+            "dem_beta": {"model_type": "HalfNormal", "mu": 0, "sigma": 10}, 
+            "mu_c": {"model_type": "Normal", "mu": 0, "sigma": 10}, 
+            "sigma_c": {"model_type": "HalfNormal", "sigma": 10}
+        },
+        "socio_model": {
+            "hse_beta":{"model_type": "Normal", "mu": 0, "sigma": 10}, 
+            "mu_c":{"model_type": "Normal", "mu": 0, "sigma": 10}, 
+            "sigma_c": {"model_type": "HalfNormal", "sigma": 10}
+        },
+        "full_model": {
+            "ppt_mu":{"model_type": "Normal", "mu": 0, "sigma": 10},
+            "ppt_sig": {"model_type": "HalfNormal", "sigma": 10},
+            "hydr_mu":{"model_type": "Normal", "mu": 0, "sigma": 10},
+            "hydr_sig": {"model_type": "HalfNormal", "sigma": 10},
+            "hse_sig": {"model_type": "HalfNormal", "sigma": 10},
+            "dem_beta":{"model_type": "HalfNormal", "sigma": 10},
+            "mu_c":{"model_type": "Normal", "mu": 0, "sigma": 10},
+            "sigma_c": {"model_type": "HalfNormal", "sigma": 10},
+            "hse":{"model_type": "Normal", "mu": 0}
+        }
+    },
+    "run_reports": "True",
+    "report_script": {
+        "VIF": "True"
+    }
+}
