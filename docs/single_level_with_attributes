@@ -1,0 +1,145 @@
+digraph {
+	compound=true
+	subgraph "clusterinputs (201142)" {
+		slope_d [label="slope_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		basin [label="basin
+~
+ConstantData" shape=box style="rounded, filled"]
+		hse_d [label="hse_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		hydr_d [label="hydr_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		ppt_d [label="ppt_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		label="inputs (201142)" labeljust=r labelloc=b style=rounded
+	}
+
+	subgraph "clusterattributes (201142)" {
+		income_d [label="income_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		age_d [label="age_d
+~
+ConstantData" shape=box style="rounded, filled"]
+		label="attributes (201142)" labeljust=r labelloc=b style=rounded
+	}
+
+	subgraph "clusterpredictors parameters" {
+		mu_c [label="mu_c
+~
+Normal" shape=ellipse style="rounded, filled"]
+		sigma_c [label="sigma_c
+~
+HalfNormal" shape=ellipse style="rounded, filled"]
+		ppt_mu [label="ppt_mu" shape=ellipse style="rounded, filled"]
+		ppt_sig [label="ppt_sig
+~
+HalfNormal" shape=ellipse style="rounded, filled"]
+		hydr_mu [label="hydr_mu" shape=ellipse style="rounded, filled"]
+		hydr_sig [label="hydr_sig
+~
+HalfNormal" shape=ellipse style="rounded, filled"]
+		hse_mu [label="hse_mu" shape=ellipse style="rounded, filled"]
+		hse_sig [label="hse_sig
+~
+HalfNormal" shape=ellipse style="rounded, filled"]
+		slope_lam [label="slope_lam" shape=ellipse, style="rounded, filled"]
+		label="predictors parameters" labeljust=r labelloc=b style=rounded
+	}
+
+	subgraph "clusterattribute parameters" {
+		hydr_age_mu [label="hydr_age_mu
+~
+Normal" shape=ellipse]
+	
+		hydr_similarity_c [label="hydr_similarity_c
+~
+Normal" shape=ellipse]
+		hydr_income_mu [label="hydr_income_mu
+~
+Normal" shape=ellipse]
+		hse_income_mu [label="hse_income_mu
+~
+Normal" shape=ellipse]
+		ppt_similarity_c [label="ppt_similarity_c
+~
+Normal" shape=ellipse]
+		ppt_income_mu [label="ppt_income_mu
+~
+Normal" shape=ellipse]
+		hse_age_mu [label="hse_age_mu
+~
+Normal" shape=ellipse]
+		slope_similarity_c [label="slope_similarity_c
+~
+Normal" shape=ellipse]
+		hse_similarity_c [label="hse_similarity_c
+~
+Normal" shape=ellipse]
+		
+		label="attribute parameters" labeljust=r labelloc=b style=rounded
+	}
+	
+	subgraph "clusterpredictors (158)" {
+		slope [label="slope
+~
+Exponential" shape=ellipse]
+		ppt [label="ppt
+~
+Normal" shape=ellipse]
+		hse [label="hse
+~
+Normal" shape=ellipse]
+		c [label="c
+~
+Normal" shape=ellipse]
+		hydr [label="hydr
+~
+Normal" shape=ellipse]
+		label="predictors (158)" labeljust=r labelloc=b style=rounded
+	}
+	subgraph cluster201142 {
+		failures [label="failures
+~
+Bernoulli" shape=ellipse style=filled]
+		label=201142 labeljust=r labelloc=b style=rounded
+	}
+	age_d -> hydr_income_mu [ltail="clusterattributes (201142)",lhead="clusterattribute parameters"]
+
+	ppt_sig -> ppt
+	ppt_mu -> ppt
+	ppt_similarity_c -> ppt_mu
+	ppt_income_mu -> ppt_mu
+
+	hydr_sig -> hydr
+	hydr_mu -> hydr
+	hydr_similarity_c -> hydr_mu
+	hydr_income_mu -> hydr_mu
+	hydr_age_mu -> hydr_mu
+
+	hse_sig -> hse
+	hse_mu -> hse
+	hse_similarity_c -> hse_mu
+	hse_income_mu -> hse_mu
+	hse_age_mu -> hse_mu
+
+	slope_lam -> slope
+	slope_similarity_c -> slope_lam
+
+	mu_c -> c
+	sigma_c -> c
+	slope_d -> failures
+	slope -> failures
+	ppt -> failures
+	hse_d -> failures
+	hse -> failures
+	hydr_d -> failures
+	c -> failures
+	ppt_d -> failures
+	hydr -> failures
+}

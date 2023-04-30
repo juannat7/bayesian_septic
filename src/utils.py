@@ -7,6 +7,8 @@ import scipy
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
+sns.set_context("paper")
+
 
 def evaluate_bayes(trace, model, y_actual):
     """
@@ -29,7 +31,7 @@ def evaluate_bayes(trace, model, y_actual):
         the accuracy of the model
     """
     ppc = pm.sample_posterior_predictive(trace, model=model)
-    y_pred = ppc['failures'].mean(axis=0)
+    y_pred = ppc['posterior_predictive']['failures'].mean(axis=0).mean(axis=0) # averaging across chains and draws
     # if p > 0.5, return 1, else return 0
     y_pred = [1 if i > 0.5 else 0 for i in y_pred]
     corr = np.sum(np.array(y_actual) == np.array(y_pred))
@@ -37,8 +39,7 @@ def evaluate_bayes(trace, model, y_actual):
     acc = (corr / len(y_pred)) * 100
     return acc, y_pred
 
-
-def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', is_multilevel=False):
+def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', hierarchy_type='basin', is_multilevel=False):
     """
     Read the initial CSV file used for modeling
     
@@ -54,6 +55,8 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
         the fraction for training split
     norm_scale: str
         the scaling for normalization, one of ['z', 'min_max']
+    hierarchy_type: str
+        the hierarchy type, one of ['basin', 'county']
     is_multilevel: boolean
         to indicate whether the coordinates returned include both basin and sub-basin (if True)
     
@@ -68,6 +71,7 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     coords: dict
         the dictionary mapping between basin_idx and basins
     """
+    assert hierarchy_type in ['basin', 'county']
     df = pd.read_csv(file_dir)
 
     # encode categorical sewage system
@@ -88,24 +92,31 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
                        df[df['sewageSystem_enc'] == 1]))
 
     # keep only relevant columns
-    all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
-    if is_multilevel:
-        all_cols += ['HU_12_NAME']
-
+    if hierarchy_type == 'basin':
+        all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
+        if is_multilevel: all_cols += ['HU_12_NAME']
+    else:
+        all_cols = cols + ['tblSGA_Property.county_property', 'sewageSystem_enc']
+        
     df = df.dropna(subset=all_cols).reset_index(drop=True)
 
     # normalize
     for i, col in enumerate(cols):
         new_var = col + '_norm'
         df = normalize(df, col, new_var, scale=norm_scale)
-        # df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
+        #df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
+ 
 
-    # separate septics based on their locations within a basin
+    # separate septics based on their locations within a basin OR county
     coords = dict()
-    basin_idx, basins = pd.factorize(df['HU_10_NAME'])
+    if hierarchy_type == 'basin':
+        basin_idx, basins = pd.factorize(df['HU_10_NAME'])
+    else:
+        basin_idx, basins = pd.factorize(df['tblSGA_Property.county_property'])
     coords.update({'basin': basins, 'septic': np.arange(len(df))})
 
     if is_multilevel:
+        # For now only valid for hierarchy_type == 'basin'
         catchment_idx, catchments = pd.factorize(df['HU_12_NAME'])
         coords.update({'catchment': catchments})
         return df, basin_idx, catchment_idx, coords
