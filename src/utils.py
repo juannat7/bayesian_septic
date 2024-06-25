@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -8,7 +7,6 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
 sns.set_context("paper")
-
 
 def evaluate_bayes(trace, model, y_actual):
     """
@@ -22,26 +20,28 @@ def evaluate_bayes(trace, model, y_actual):
         the model definition
     y_actual: numpy array
         the actual septic status
-    samples: int (deprecated)
-        the number of sampling done per each data point
     
     returns:
     --------
     acc: float
         the accuracy of the model
+
+    y_pred: numpy array
+        the predicted states
     """
     ppc = pm.sample_posterior_predictive(trace, model=model)
     y_pred = ppc['posterior_predictive']['failures'].mean(axis=0).mean(axis=0) # averaging across chains and draws
+    
     # if p > 0.5, return 1, else return 0
     y_pred = [1 if i > 0.5 else 0 for i in y_pred]
     corr = np.sum(np.array(y_actual) == np.array(y_pred))
 
-    acc = (corr / len(y_pred)) * 100
+    acc = (corr / len(y_pred)) * 100 # expressed as percentage
     return acc, y_pred
 
-def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', hierarchy_type='basin', is_multilevel=False):
+def read_data(file_dir, cols, is_balanced=True, norm_scale='z', hierarchy_type='basin', is_multilevel=False):
     """
-    Read the initial CSV file used for modeling
+    Read the processed CSV file used for modeling
     
     parameters:
     -----------
@@ -74,27 +74,27 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     assert hierarchy_type in ['basin', 'county']
     df = pd.read_csv(file_dir)
 
-    # encode categorical sewage system
+    # encode categorical sewage system status
     enc, _ = pd.factorize(df['sewageSystem'])
     df['sewageSystem_enc'] = enc
     df.loc[df['sewageSystem_enc'] == 1, 'sewageSystem_enc'] = 1  # need repair
     df.loc[(df['sewageSystem_enc'] == 0) | (df['sewageSystem_enc'] == 2), 'sewageSystem_enc'] = 0  # new + addition
 
-    # get balanced class (septics needing repair are not as many)
+    # randomly balancing class (records for septics needing repair are not as many)
     if is_balanced:
         num = len(df[df['sewageSystem_enc'] == 1].values)
-        print(
-            f'balancing...\nrepairs: {num/len(df)*100}%, non-repairs: {(len(df) - num)/len(df)*100}%')
+        print(f'balancing...\nrepairs: {num/len(df)*100}%, non-repairs: {(len(df) - num)/len(df)*100}%')
 
-        # split equally
+        # random balancing: concat between (1) samples randomly drawn from the entire set + (2) few-shot class
+        # upside: keeps the number of records allowing for better big data analysis
+        # downside: duplicates on the few-shot class (akin to multiple-epoch gradient descent passes)
         idx = df[df['sewageSystem_enc'] == 0]
-        df = pd.concat((df.sample(n=len(idx), random_state=42),
-                       df[df['sewageSystem_enc'] == 1]))
+        df = pd.concat((df.sample(n=len(idx), random_state=42), df[df['sewageSystem_enc'] == 1]))
 
     # keep only relevant columns
     if hierarchy_type == 'basin':
         all_cols = cols + ['HU_10_NAME', 'sewageSystem_enc']
-        if is_multilevel: all_cols += ['HU_12_NAME']
+        if is_multilevel: all_cols += ['HU_12_NAME'] # also include sub-basins in the multi=level case
     else:
         all_cols = cols + ['tblSGA_Property.county_property', 'sewageSystem_enc']
         
@@ -104,8 +104,6 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
     for i, col in enumerate(cols):
         new_var = col + '_norm'
         df = normalize(df, col, new_var, scale=norm_scale)
-        #df[new_var] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
- 
 
     # separate septics based on their locations within a basin OR county
     coords = dict()
@@ -113,15 +111,16 @@ def read_data(file_dir, cols, is_balanced=True, train_frac=0.9, norm_scale='z', 
         basin_idx, basins = pd.factorize(df['HU_10_NAME'])
     else:
         basin_idx, basins = pd.factorize(df['tblSGA_Property.county_property'])
+    
     coords.update({'basin': basins, 'septic': np.arange(len(df))})
 
     if is_multilevel:
-        # For now only valid for hierarchy_type == 'basin'
+        # For now only valid for hierarchy_type == 'basin' i.e., no sub-county level is defined
         catchment_idx, catchments = pd.factorize(df['HU_12_NAME'])
         coords.update({'catchment': catchments})
         return df, basin_idx, catchment_idx, coords
 
-    # legacy code to ensure other notebooks work
+    # legacy code to ensure other notebooks work e.g., for county level, non-multilevel dataset construction
     return df, basin_idx, basins, coords
 
 
@@ -168,8 +167,7 @@ def normalize(df, var, var_norm, scale='z'):
     """
 
     if scale == 'min_max':
-        df[var_norm] = (df[var] - df[var].min()) / \
-            (df[var].max() - df[var].min())
+        df[var_norm] = (df[var] - df[var].min()) / (df[var].max() - df[var].min())
     else:
         df[var_norm] = (df[var] - df[var].mean()) / df[var].std()
 
